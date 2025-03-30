@@ -100,8 +100,7 @@ const Results = () => {
                     </div>
                     <Progress 
                       value={confidence} 
-                      className="h-2" 
-                      indicatorClassName={confidence >= 90 ? "bg-green-600" : confidence >= 70 ? "bg-amber-500" : "bg-red-500"}
+                      className={`h-2 ${confidence >= 90 ? "bg-green-200" : confidence >= 70 ? "bg-amber-200" : "bg-red-200"}`}
                     />
                   </div>
                 </div>

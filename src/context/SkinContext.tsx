@@ -10,6 +10,8 @@ export interface SkinAnalysis {
     confidence: number;
     description: string;
     treatment: string;
+    severity?: 'mild' | 'moderate' | 'severe';
+    precautions?: string[];
   } | null;
 }
 
