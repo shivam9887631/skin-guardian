@@ -1,10 +1,11 @@
 
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Activity, Stethoscope, Info, AlertCircle, Shield, ExternalLink } from 'lucide-react';
+import { ArrowLeft, Activity, Stethoscope, Info, AlertCircle, Shield, ExternalLink, Calendar, FileText } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
+import { Badge } from '@/components/ui/badge';
 import { useSkinContext } from '@/context/SkinContext';
 import { PLACEHOLDER_IMAGE } from '@/utils/constants';
 import NavBar from '@/components/NavBar';
@@ -45,34 +46,44 @@ const Results = () => {
   
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-b from-background to-skin-light-blue">
-      <div className="p-4">
-        <Button 
-          variant="ghost" 
-          size="icon" 
-          onClick={() => navigate('/home')}
-          className="hover:bg-white/50"
-        >
-          <ArrowLeft className="h-6 w-6" />
-        </Button>
+      <div className="fixed top-0 left-0 right-0 z-10 bg-white/80 backdrop-blur-sm">
+        <div className="container max-w-lg mx-auto px-4 py-3 flex items-center justify-between">
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            onClick={() => navigate('/home')}
+            className="hover:bg-white/50"
+          >
+            <ArrowLeft className="h-5 w-5" />
+          </Button>
+          <h1 className="text-lg font-semibold text-skin-blue">Analysis Results</h1>
+          <div className="w-9"></div> {/* Spacer for balance */}
+        </div>
       </div>
       
-      <div className="flex-1 container max-w-lg mx-auto px-4 py-2 pb-20">
-        <div className="space-y-6">
-          <div className="text-center mb-2">
-            <h1 className="text-2xl font-bold">Analysis Results</h1>
-            <p className="text-sm text-gray-500">
-              {new Date(currentAnalysis.date).toLocaleDateString(undefined, {
-                year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
-              })}
-            </p>
-          </div>
-          
-          <Card className="shadow-lg overflow-hidden border-none">
+      <div className="flex-1 container max-w-lg mx-auto px-4 py-2 pb-20 mt-14">
+        <div className="space-y-5">
+          <div className="bg-white rounded-2xl shadow-md overflow-hidden border border-gray-100 animate-fade-in">
             <div className="h-2 bg-gradient-to-r from-skin-blue to-skin-teal"></div>
-            <CardContent className="p-0">
-              <div className="flex md:flex-row flex-col">
+            <div className="p-4">
+              <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center gap-2">
+                  <FileText className="h-5 w-5 text-skin-blue" />
+                  <span className="text-sm text-gray-500">Medical Report</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Calendar className="h-4 w-4 text-gray-400" />
+                  <span className="text-xs text-gray-500">
+                    {new Date(currentAnalysis.date).toLocaleDateString(undefined, {
+                      year: 'numeric', month: 'short', day: 'numeric'
+                    })}
+                  </span>
+                </div>
+              </div>
+              
+              <div className="flex md:flex-row flex-col gap-4 mt-3">
                 <div className="md:w-1/3 w-full">
-                  <div className="aspect-square overflow-hidden">
+                  <div className="aspect-square rounded-lg overflow-hidden border border-gray-200 shadow-sm">
                     <img
                       src={currentAnalysis.imageUrl || PLACEHOLDER_IMAGE}
                       alt="Analyzed skin condition"
@@ -81,65 +92,70 @@ const Results = () => {
                   </div>
                 </div>
                 
-                <div className="md:w-2/3 w-full p-4">
-                  <div className="flex items-center space-x-2 mb-2">
-                    <h2 className="text-xl font-semibold text-skin-blue">{disease}</h2>
+                <div className="md:w-2/3 w-full space-y-3">
+                  <div>
+                    <h2 className="text-2xl font-bold text-gray-800 mb-1">{disease}</h2>
                     {severity && (
-                      <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${getSeverityColor(severity)}`}>
-                        {severity}
-                      </span>
+                      <Badge className={`font-medium ${getSeverityColor(severity)}`}>
+                        {severity.charAt(0).toUpperCase() + severity.slice(1)} Severity
+                      </Badge>
                     )}
                   </div>
                   
-                  <div className="mb-4">
-                    <div className="flex justify-between mb-1">
-                      <span className="text-sm">Confidence:</span>
+                  <div>
+                    <div className="flex justify-between items-center mb-1">
+                      <span className="text-sm font-medium text-gray-600">Confidence Score</span>
                       <span className={`text-sm font-bold ${getConfidenceColor(confidence)}`}>
                         {confidence}%
                       </span>
                     </div>
-                    <Progress 
-                      value={confidence} 
-                      className={`h-2 ${confidence >= 90 ? "bg-green-200" : confidence >= 70 ? "bg-amber-200" : "bg-red-200"}`}
-                    />
+                    <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+                      <Progress 
+                        value={confidence} 
+                        className={`h-2 ${confidence >= 90 ? "bg-green-200" : confidence >= 70 ? "bg-amber-200" : "bg-red-200"}`}
+                      />
+                    </div>
                   </div>
                 </div>
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
           
-          <Card className="shadow-md border-none">
-            <CardContent className="p-4">
-              <h3 className="text-lg font-medium mb-2 flex items-center">
+          <Card className="shadow-md border-none overflow-hidden animate-fade-in" style={{animationDelay: "100ms"}}>
+            <div className="h-1 bg-gradient-to-r from-skin-blue via-skin-teal to-skin-blue"></div>
+            <CardContent className="p-5">
+              <h3 className="text-lg font-medium mb-3 flex items-center text-gray-800">
                 <Info className="h-5 w-5 mr-2 text-skin-blue" />
                 About this Condition
               </h3>
-              <p className="text-sm">{description}</p>
+              <p className="text-gray-600 leading-relaxed">{description}</p>
             </CardContent>
           </Card>
           
-          <Card className="shadow-md border-none">
-            <CardContent className="p-4">
-              <h3 className="text-lg font-medium mb-2 flex items-center">
+          <Card className="shadow-md border-none overflow-hidden animate-fade-in" style={{animationDelay: "200ms"}}>
+            <div className="h-1 bg-gradient-to-r from-skin-blue via-skin-teal to-skin-blue"></div>
+            <CardContent className="p-5">
+              <h3 className="text-lg font-medium mb-3 flex items-center text-gray-800">
                 <Activity className="h-5 w-5 mr-2 text-skin-blue" />
-                Treatment Options
+                Treatment Recommendations
               </h3>
-              <p className="text-sm">{treatment}</p>
+              <p className="text-gray-600 leading-relaxed">{treatment}</p>
             </CardContent>
           </Card>
           
           {precautions && precautions.length > 0 && (
-            <Card className="shadow-md border-none">
-              <CardContent className="p-4">
-                <h3 className="text-lg font-medium mb-2 flex items-center">
+            <Card className="shadow-md border-none overflow-hidden animate-fade-in" style={{animationDelay: "300ms"}}>
+              <div className="h-1 bg-gradient-to-r from-skin-blue via-skin-teal to-skin-blue"></div>
+              <CardContent className="p-5">
+                <h3 className="text-lg font-medium mb-3 flex items-center text-gray-800">
                   <Shield className="h-5 w-5 mr-2 text-skin-blue" />
                   Precautions
                 </h3>
-                <ul className="text-sm space-y-1">
+                <ul className="space-y-2 text-gray-600">
                   {precautions.map((precaution, index) => (
                     <li key={index} className="flex items-start">
-                      <span className="inline-block w-1.5 h-1.5 rounded-full bg-skin-blue mt-1.5 mr-2"></span>
-                      {precaution}
+                      <span className="inline-block w-2 h-2 rounded-full bg-skin-blue mt-1.5 mr-3"></span>
+                      <span className="leading-relaxed">{precaution}</span>
                     </li>
                   ))}
                 </ul>
@@ -147,25 +163,27 @@ const Results = () => {
             </Card>
           )}
           
-          <Card className="shadow-md bg-skin-light-teal border-none">
-            <CardContent className="p-4">
-              <h3 className="text-lg font-medium mb-2 flex items-center">
-                <AlertCircle className="h-5 w-5 mr-2 text-skin-teal" />
+          <Card className="shadow-md bg-white border-none overflow-hidden animate-fade-in" style={{animationDelay: "400ms"}}>
+            <div className="h-1 bg-gradient-to-r from-red-400 to-red-500"></div>
+            <CardContent className="p-5">
+              <h3 className="text-lg font-medium mb-3 flex items-center text-gray-800">
+                <AlertCircle className="h-5 w-5 mr-2 text-red-500" />
                 Medical Disclaimer
               </h3>
-              <p className="text-sm">
+              <p className="text-sm text-gray-600 leading-relaxed">
                 This analysis is for informational purposes only and should not replace professional medical advice. Please consult a dermatologist for proper diagnosis and treatment.
               </p>
               
-              <Button 
-                className="w-full mt-4 bg-white text-skin-blue hover:bg-gray-100"
-                variant="outline"
-                onClick={() => window.open('https://www.google.com/search?q=dermatologist+near+me', '_blank')}
-              >
-                <Stethoscope className="h-4 w-4 mr-2" />
-                <span>Find a Dermatologist</span>
-                <ExternalLink className="h-3 w-3 ml-1" />
-              </Button>
+              <div className="grid grid-cols-1 gap-3 mt-4">
+                <Button 
+                  className="w-full bg-skin-blue hover:bg-skin-blue/90 text-white font-medium"
+                  onClick={() => window.open('https://www.google.com/search?q=dermatologist+near+me', '_blank')}
+                >
+                  <Stethoscope className="h-4 w-4 mr-2" />
+                  <span>Find a Dermatologist</span>
+                  <ExternalLink className="h-3 w-3 ml-1" />
+                </Button>
+              </div>
             </CardContent>
           </Card>
         </div>
